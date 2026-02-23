@@ -86,7 +86,7 @@ export function CommandMenu() {
           </CommandItem>
           <CommandItem onSelect={() => navigate("/migrate")}>
             <ArrowRightLeft className="mr-2 h-4 w-4" />
-            Migrate from Bitly
+            Migrate Links
           </CommandItem>
           <CommandItem onSelect={() => navigate("/login")}>
             <LogIn className="mr-2 h-4 w-4" />

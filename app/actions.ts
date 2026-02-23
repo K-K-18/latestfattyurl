@@ -115,57 +115,57 @@ export async function getLinkStats() {
   return { totalLinks, linksToday }
 }
 
-// --- Bitly Migration Server Actions ---
+// --- Provider Migration Server Actions ---
 // These run server-side to avoid CORS issues and token exposure in the browser
 
-type BitlyLink = {
+type ProviderLink = {
   long_url: string
   link: string
   custom_bitlinks?: string[]
   title?: string
 }
 
-export async function fetchBitlyLinks(
+export async function fetchProviderLinks(
   token: string
-): Promise<{ success: boolean; links?: BitlyLink[]; error?: string }> {
+): Promise<{ success: boolean; links?: ProviderLink[]; error?: string }> {
   if (!token || token.trim().length < 10) {
-    return { success: false, error: "Please enter a valid Bitly API token" }
+    return { success: false, error: "Please enter a valid API token" }
   }
 
   try {
-    // Get the default group
+    // Get the default group from the provider
     const groupRes = await fetch("https://api-ssl.bitly.com/v4/groups", {
       headers: { Authorization: `Bearer ${token}` },
     })
 
     if (!groupRes.ok) {
-      return { success: false, error: "Invalid Bitly token" }
+      return { success: false, error: "Invalid API token" }
     }
 
     const groupData = await groupRes.json()
     const groupGuid = groupData.groups?.[0]?.guid
     if (!groupGuid) {
-      return { success: false, error: "No Bitly group found" }
+      return { success: false, error: "No link group found" }
     }
 
-    // Fetch bitlinks
+    // Fetch links from provider
     const linksRes = await fetch(
       `https://api-ssl.bitly.com/v4/groups/${groupGuid}/bitlinks?size=100`,
       { headers: { Authorization: `Bearer ${token}` } }
     )
 
     if (!linksRes.ok) {
-      return { success: false, error: "Failed to fetch Bitly links" }
+      return { success: false, error: "Failed to fetch links" }
     }
 
     const linksData = await linksRes.json()
     return { success: true, links: linksData.links || [] }
   } catch {
-    return { success: false, error: "Failed to connect to Bitly" }
+    return { success: false, error: "Failed to connect to provider" }
   }
 }
 
-export async function importBitlyLink(
+export async function importProviderLink(
   longUrl: string,
   customSlug?: string
 ): Promise<{ status: "imported" | "conflict" | "error" }> {

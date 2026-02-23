@@ -5,7 +5,7 @@ import Link from "next/link"
 import { signOut } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
-import { Menu, LayoutDashboard, Settings, LogOut } from "lucide-react"
+import { Menu, LayoutDashboard, Settings, LogOut, Users } from "lucide-react"
 
 export function DashboardMobileNav({
   userName,
@@ -36,6 +36,17 @@ export function DashboardMobileNav({
             <Link href="/dashboard">
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Links
+            </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            className="justify-start"
+            asChild
+            onClick={() => setOpen(false)}
+          >
+            <Link href="/dashboard/team">
+              <Users className="mr-2 h-4 w-4" />
+              Team
             </Link>
           </Button>
           <Button

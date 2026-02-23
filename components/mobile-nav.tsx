@@ -65,7 +65,7 @@ export function MobileNav({ isLoggedIn }: { isLoggedIn: boolean }) {
             asChild
             onClick={() => setOpen(false)}
           >
-            <Link href="/migrate">Migrate from Bitly</Link>
+            <Link href="/migrate">Migrate Links</Link>
           </Button>
 
           <div className="my-3 h-px bg-border" />

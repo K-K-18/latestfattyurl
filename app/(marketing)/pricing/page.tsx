@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Check, Zap } from "lucide-react"
+import { Check, Zap, ArrowRight, Sparkles } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Pricing | FattyURL",
@@ -26,8 +26,8 @@ const plans = [
       "Custom slugs",
       "Password-protected links",
       "Link expiration",
-      "API access (1000 req/hr)",
-      "Bitly migration tool",
+      "API access (1,000 req/hr)",
+      "Link migration tool",
       "Export data anytime",
     ],
   },
@@ -44,7 +44,7 @@ const plans = [
       "Custom branded domains",
       "UTM builder",
       "Advanced analytics",
-      "Priority API (5000 req/hr)",
+      "Priority API (5,000 req/hr)",
       "Bulk link creation",
       "Link tags & folders",
       "Priority email support",
@@ -76,7 +76,7 @@ const plans = [
 export default function PricingPage() {
   return (
     <div className="container mx-auto px-4 py-16">
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 sm:mb-16">
         <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm mb-4">
           <Zap className="h-3.5 w-3.5 text-primary" />
           Simple, transparent pricing
@@ -92,19 +92,20 @@ export default function PricingPage() {
         </p>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
+      <div className="grid gap-6 sm:gap-8 md:grid-cols-3 max-w-5xl mx-auto">
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={`relative flex flex-col ${
+            className={`relative flex flex-col transition-all duration-300 ${
               plan.highlighted
-                ? "border-primary shadow-lg shadow-primary/10 scale-[1.02]"
-                : ""
+                ? "border-primary shadow-lg shadow-primary/10 scale-[1.02] ring-1 ring-primary/20"
+                : "hover:shadow-md"
             }`}
           >
             {plan.highlighted && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
+                  <Sparkles className="h-3 w-3" />
                   Most Popular
                 </span>
               </div>
@@ -133,7 +134,10 @@ export default function PricingPage() {
                 variant={plan.highlighted ? "default" : "outline"}
                 asChild
               >
-                <Link href={plan.ctaHref}>{plan.cta}</Link>
+                <Link href={plan.ctaHref}>
+                  {plan.cta}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
             </CardContent>
           </Card>
@@ -156,12 +160,16 @@ export default function PricingPage() {
               a: "Free tier gets 1,000 requests per hour. If you need more, upgrade to Pro (5,000/hr) or Business (custom limits). Rate-limited requests get a 429 response with a Retry-After header.",
             },
             {
-              q: "Can I migrate from Bitly?",
-              a: "Absolutely. Our built-in migration tool imports all your Bitly links with one click. Custom slugs are preserved when available.",
+              q: "Can I migrate from another URL shortener?",
+              a: "Absolutely. Our built-in migration tool imports all your links in minutes. Custom slugs are preserved when available.",
             },
             {
               q: "Do you sell my data?",
               a: "Never. We don't use third-party analytics or advertising. Your data stays with you. Read our Privacy Policy for details.",
+            },
+            {
+              q: "Can I self-host FattyURL?",
+              a: "Yes! FattyURL is open source and includes Docker support. Deploy on your own infrastructure with full control.",
             },
           ].map((faq) => (
             <div key={faq.q} className="border-b pb-4">

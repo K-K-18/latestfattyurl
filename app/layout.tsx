@@ -30,8 +30,8 @@ export const metadata: Metadata = {
     "short links",
     "qr code generator",
     "link analytics",
-    "bitly alternative",
     "free link shortener",
+    "enterprise url shortener",
   ],
   authors: [{ name: "FattyURL" }],
   openGraph: {

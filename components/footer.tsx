@@ -17,12 +17,12 @@ export function Footer() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
-              Free forever URL shortener. No ads. No limits. No BS.
+              Enterprise-grade URL shortener. Free forever. No ads. No limits.
             </p>
           </div>
 
           {/* Links */}
-          <div className="flex gap-12">
+          <div className="grid grid-cols-2 gap-8 sm:flex sm:gap-12">
             <div className="space-y-3">
               <p className="text-sm font-semibold">Product</p>
               <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
@@ -36,7 +36,7 @@ export function Footer() {
                   API Docs
                 </Link>
                 <Link href="/migrate" className="hover:text-foreground transition-colors">
-                  Migrate from Bitly
+                  Migrate Links
                 </Link>
               </nav>
             </div>
@@ -54,7 +54,7 @@ export function Footer() {
                 </Link>
               </nav>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 col-span-2 sm:col-span-1">
               <p className="text-sm font-semibold">Legal</p>
               <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <Link href="/privacy" className="hover:text-foreground transition-colors">
