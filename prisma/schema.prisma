@@ -1,0 +1,187 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  apiKey        String?   @unique @default(cuid())
+  apiKeyHash    String?   @unique
+  plan          String    @default("free")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts    Account[]
+  sessions    Session[]
+  links       Link[]
+  domains     CustomDomain[]
+  teamMembers TeamMember[]
+  webhooks    Webhook[]
+  auditLogs   AuditLog[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Link {
+  id          String    @id @default(cuid())
+  shortCode   String    @unique
+  customSlug  String?   @unique
+  originalUrl String    @db.Text
+  title       String?
+  userId      String?
+  teamId      String?
+  isActive    Boolean   @default(true)
+  password    String?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  team   Team?   @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  clicks Click[]
+
+  @@index([shortCode])
+  @@index([customSlug])
+  @@index([userId])
+  @@index([teamId])
+  @@index([createdAt])
+}
+
+model Click {
+  id         String   @id @default(cuid())
+  linkId     String
+  clickedAt  DateTime @default(now())
+  referrer   String?
+  userAgent  String?
+  country    String?  @db.VarChar(2)
+  city       String?  @db.VarChar(100)
+  deviceType String?  @db.VarChar(20)
+  browser    String?  @db.VarChar(50)
+  os         String?  @db.VarChar(50)
+  ipHash     String?  @db.VarChar(64)
+
+  link Link @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@index([linkId])
+  @@index([clickedAt])
+  @@index([linkId, clickedAt])
+}
+
+model CustomDomain {
+  id         String   @id @default(cuid())
+  domain     String   @unique
+  userId     String
+  verified   Boolean  @default(false)
+  txtRecord  String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([domain])
+  @@index([userId])
+}
+
+// --- Enterprise Models ---
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members TeamMember[]
+  links   Link[]
+
+  @@index([slug])
+}
+
+model TeamMember {
+  id       String   @id @default(cuid())
+  teamId   String
+  userId   String
+  role     String   @default("member") // owner, admin, member
+  joinedAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+}
+
+model Webhook {
+  id        String   @id @default(cuid())
+  userId    String
+  url       String
+  events    String[] // e.g. ["click", "link.created", "link.deleted"]
+  secret    String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String   // e.g. "link.create", "link.delete", "api_key.regenerate"
+  resource   String   // e.g. "link", "api_key", "team"
+  resourceId String?
+  metadata   Json?
+  ip         String?  @db.VarChar(64)
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+}
